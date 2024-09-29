@@ -24,7 +24,7 @@ fun LandingScreen(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center) {
 
-        // neither recomposition, or new onTimeout causes delay, since
+        // neither re-composition, or new onTimeout causes delay, since
         // rememberUpdatedState retains latest state, without launching long-lived lambda in LaunchedEffect
         val currentOnTimeout by rememberUpdatedState(onTimeout)
         LaunchedEffect(Unit) {
