@@ -56,7 +56,6 @@ class MainViewModel @Inject constructor(
         }
     }
 
-
     // update destinations based on selected city
     fun toDestinationChanged(newDestination: String) {
         viewModelScope.launch {
