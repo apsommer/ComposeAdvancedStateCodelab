@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -18,8 +19,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -27,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.samples.crane.R
 import androidx.compose.samples.crane.data.ExploreModel
 import androidx.compose.samples.crane.home.OnExploreItemClicked
@@ -43,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest.Builder
+import kotlinx.coroutines.launch
 
 @Composable
 fun ExploreSection(
@@ -58,20 +63,41 @@ fun ExploreSection(
                 style = MaterialTheme.typography.caption.copy(color = crane_caption)
             )
             Spacer(Modifier.height(8.dp))
+            Box(Modifier.weight(1f)) {
+                val listState = rememberLazyListState()
+                ExploreList(exploreList, onItemClicked, listState = listState)
 
-            val listState = rememberLazyListState()
+                // Show the button if the first visible item is past
+                // the first item. We use a remembered derived state to
+                // minimize unnecessary recompositions
 
-            ExploreList(exploreList, onItemClicked, listState = listState)
+                // derivedStateOf lambda executes everytime its internal state changes, but
+                // its parent composable only recomposes if the value changes
+                val showButton by remember {
+                    derivedStateOf {
+                        listState.firstVisibleItemIndex > 0
+                    }
+                }
 
-            // Show the button if the first visible item is past
-            // the first item. We use a remembered derived state to
-            // minimize unnecessary recompositions
+                if (showButton) {
 
-            // derivedStateOf lambda executes everytime its internal state changes, but
-            // its parent composable only recomposes if the value changes
-            val showButton by remember {
-                derivedStateOf {
-                    listState.firstVisibleItemIndex > 0
+                    // enable coroutines in composable lambdas!
+                    val coroutineScope = rememberCoroutineScope()
+
+                    FloatingActionButton(
+                        backgroundColor = MaterialTheme.colors.primary,
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .navigationBarsPadding()
+                            .padding(bottom = 8.dp),
+                        onClick = {
+                            coroutineScope.launch {
+                                listState.scrollToItem(0)
+                            }
+                        }
+                    ) {
+                        Text("Up!")
+                    }
                 }
             }
         }
