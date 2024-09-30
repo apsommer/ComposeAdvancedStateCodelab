@@ -51,7 +51,7 @@ fun rememberMapViewWithLifecycle(): MapView {
     DisposableEffect(key1 = lifecycle, key2 = mapView) {
         val lifecycleObserver = getMapLifecycleObserver(mapView)
 
-        // associate google map to detail activity's lifectyle
+        // associate google map to detail activity's lifecycle
         lifecycle.addObserver(lifecycleObserver)
         onDispose { lifecycle.removeObserver(lifecycleObserver) }
     }

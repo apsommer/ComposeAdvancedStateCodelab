@@ -49,6 +49,12 @@ import kotlinx.coroutines.launch
 
 internal const val KEY_ARG_DETAILS_CITY_NAME = "KEY_ARG_DETAILS_CITY_NAME"
 
+data class DetailsUiState(
+    val cityDetails: ExploreModel? = null,
+    val isLoading: Boolean = false,
+    val throwError: Boolean = false
+)
+
 fun launchDetailsActivity(context: Context, item: ExploreModel) {
     context.startActivity(createDetailsActivityIntent(context, item))
 }
